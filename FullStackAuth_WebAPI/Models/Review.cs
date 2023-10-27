@@ -25,7 +25,7 @@ namespace FullStackAuth_WebAPI.Models
         
         public  int? AdaptabilityRate { get; set; }
 
-        public bool IsWorker { get; set; } = true;
+        
 
 
         public virtual ICollection<User> Users { get; set; }

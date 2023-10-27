@@ -3,6 +3,7 @@ using System;
 using FullStackAuth_WebAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FullStackAuth_WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231027184709_AddingReviewAndJobModelsUpdatingUser")]
+    partial class AddingReviewAndJobModelsUpdatingUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,6 +93,9 @@ namespace FullStackAuth_WebAPI.Migrations
 
                     b.Property<int>("Communication")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsWorker")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("LikelinessOfRepeat")
                         .HasColumnType("int");
@@ -242,13 +248,13 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "04c2fe21-777a-4a18-ac31-434854ed5f3e",
+                            Id = "86aa0e5b-6f0d-4185-b58f-dc90f0a33ade",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "67b6d7de-e4da-41be-9ec9-047b95d2f6a6",
+                            Id = "cc4aaea5-371c-4f18-9997-81b67c02b5f6",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
