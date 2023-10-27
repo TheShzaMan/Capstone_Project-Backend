@@ -26,15 +26,18 @@ namespace FullStackAuth_WebAPI.Models
         [Required]
         public double PayPerHour { get; set; }
 
-        
-       
-        [ForeignKey("User")]
-        public string PostedByUserId { get; set; }
-        public User PostedByUser { get; set; }
-        
-        [ForeignKey("User")]
-        public string? AcceptedByUserId { get; set; }
-        public User AcceptedByUser { get; set; }
+
+        public virtual ICollection<User> Users { get; set; }
+
+
+
+        //[ForeignKey("User")]
+        //public string PostedByUserId { get; set; }
+        //public User PostedByUser { get; set; }
+
+        //[ForeignKey("User")]
+        //public string? AcceptedByUserId { get; set; }
+        //public User AcceptedByUser { get; set; }
 
     }
 }

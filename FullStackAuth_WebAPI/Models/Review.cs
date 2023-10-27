@@ -28,13 +28,16 @@ namespace FullStackAuth_WebAPI.Models
         public bool IsWorker { get; set; } = true;
 
 
-        [ForeignKey("User")]
-        public string ReviewedUserId { get; set; }
-        public User User { get; set; }
+        public virtual ICollection<User> Users { get; set; }
 
-        [ForeignKey("User")]
-        public string ReviewMakerId { get; set; }
-        public User ReviewMaker { get; set; }
+
+        //[ForeignKey("User")]
+        //public string ReviewedUserId { get; set; }
+        //public User User { get; set; }
+
+        //[ForeignKey("User")]
+        //public string ReviewMakerId { get; set; }
+        //public User ReviewMaker { get; set; }
 
     }
 }

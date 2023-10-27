@@ -16,5 +16,8 @@ namespace FullStackAuth_WebAPI.Models
         public string? BusinessDescription { get; set; }
         public bool? IsAvailNow { get; set; }
 
+        public virtual ICollection<Review> Reviews { get; set; }
+        public virtual ICollection<Job> Jobs { get; set; }
+
     }
 }
