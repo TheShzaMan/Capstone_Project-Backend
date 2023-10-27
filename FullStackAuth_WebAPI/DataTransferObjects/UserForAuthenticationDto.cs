@@ -10,5 +10,7 @@ namespace FullStackAuth_WebAPI.DataTransferObjects
 
         [Required(ErrorMessage = "Password is required.")]
         public string Password { get; set; }
+
+        
     }
 }
