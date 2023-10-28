@@ -2,7 +2,7 @@
 
 namespace FullStackAuth_WebAPI.DataTransferObjects
 {
-    public class DisplayReviewSummaryDto
+    public class UserProfileWithReviewSummaryDto
     {
         public int TotalReviewsJobs { get; set; }
         public int AvgOverallScore { get; set; }
@@ -13,6 +13,8 @@ namespace FullStackAuth_WebAPI.DataTransferObjects
         public int AvgCommunication { get; set; }
         public int? AvgAdaptability { get; set; }
         public bool IsWorker { get; set; }
+
+        public UserForProfileDto User { get; set; }
 
     }
 }

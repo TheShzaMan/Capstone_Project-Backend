@@ -45,8 +45,24 @@ namespace FullStackAuth_WebAPI.Controllers
             {
                 Id = user.Id,
                 UserName = user.UserName,
-                FirstName = user.FirstName,
+                Name = user.FirstName,
                 LastName = user.LastName,
+
+                // \ / UserForProfileDto format
+                //  V 
+                //Id = user.Id,
+                //FirstName = user.FirstName,
+                //LastName = user.LastName,
+                //IsWorker = user.IsWorker,
+                //UserName = user.UserName,
+                //Area = user.Area,
+                //SkillLevel = user.SkillLevel,
+                //Availability = user.Availability,
+                //WagePerHour = user.WagePerHour,
+                //Experience = user.Experience,
+                //BusinessDescription = user.BusinessDescription,
+                //IsAvailNow = user.IsAvailNow,
+
             };
             return StatusCode(201, createdUser);
         }
