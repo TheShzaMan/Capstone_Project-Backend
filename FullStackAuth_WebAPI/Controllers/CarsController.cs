@@ -42,7 +42,7 @@ namespace FullStackAuth_WebAPI.Controllers
                     Year = c.Year,
                     Owner = new UserForDisplayDto
                     {
-                        Id = c.Owner.Id,d
+                        Id = c.Owner.Id,
                         Name = c.Owner.FirstName,
                         LastName = c.Owner.LastName,
                         UserName = c.Owner.UserName,

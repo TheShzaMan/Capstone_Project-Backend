@@ -24,7 +24,9 @@ namespace FullStackAuth_WebAPI.Controllers
             _context = context;
         }
 
-                       // Get all available jobs using DisplayJobWithUserDto
+
+            // ** Get all available jobs using DisplayJobWithUserDto ** \\
+
         // GET: api/jobs
         [HttpGet]
         public IActionResult GetAvailJobs()
@@ -65,10 +67,34 @@ namespace FullStackAuth_WebAPI.Controllers
             return "value";
         }
 
+            // ** Post a New Job ** \\
+
         // POST api/jobs
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost, Authorize]
+        public IActionResult Post([FromBody] Job data)
         {
+            try
+            {
+                string userId = User.FindFirstValue("id");
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized();
+                }
+                _context.Jobs.Add(data);
+                
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                _context.SaveChanges();
+                
+                return StatusCode(201, data);  //check response, if 'data' sends entire User info, change this response.
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // PUT api/jobs/5
