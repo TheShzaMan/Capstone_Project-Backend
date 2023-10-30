@@ -8,7 +8,7 @@ namespace FullStackAuth_WebAPI.DataTransferObjects
         [Required(ErrorMessage = "First name is required.")]
         public string FirstName { get; set; }
         
-        [Required(ErrorMessage = "Last name is required.")]
+        
         public string? LastName { get; set; }
         
         [Required(ErrorMessage = "Username is required.")]
@@ -26,7 +26,7 @@ namespace FullStackAuth_WebAPI.DataTransferObjects
        
         public string? Availability { get; set; }
 
-        [Required]
+        
         public double WagePerHour { get; set; }
         
         public string? Experience { get; set; }

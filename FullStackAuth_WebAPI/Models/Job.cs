@@ -10,7 +10,7 @@ namespace FullStackAuth_WebAPI.Models
     {
         [Key]
         public int Id { get; set; }
-       
+
         [Required]
         public string Location { get; set; }
 
@@ -22,12 +22,14 @@ namespace FullStackAuth_WebAPI.Models
 
         [Required]
         public string JobDescription { get; set; }
-        
+
         [Required]
         public double PayPerHour { get; set; }
+        public string? PostingUserId { get; set; }
 
-
-        public virtual ICollection<User> Users { get; set; }
+        //public User postingUser { get; set; }
+       
+        public virtual ICollection<JobUser> JobUsers { get; set; }
 
 
 

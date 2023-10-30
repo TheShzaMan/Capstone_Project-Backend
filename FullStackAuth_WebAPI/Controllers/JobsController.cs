@@ -4,6 +4,7 @@ using FullStackAuth_WebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Bcpg;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,26 +34,45 @@ namespace FullStackAuth_WebAPI.Controllers
         {
             try
             {
-                var availableJobs = _context.Jobs
-                    .Include(job => job.Users)
-                    .Where(job => job.Users.Count < 2)
-                    .Select(job => new DisplayJobWithUserDto
+                //    var availableJobs = _context.Jobs                    
+                //        .Include(j => j.JobUsers)
+                //        .Where(j => j.JobUsers.Count < 2);
+                //    var postingUserId = _context.JobUsers
+                //        .Select(ju => ju.UserId);
+
+                //        .Select(u => new UserForDisplayDto
+                //        {
+                //            Id = u.Id,
+                //            Name = u.FirstName,
+                //            UserName = u.UserName
+                //        }).Single();
+
+                var availJobsWithUser = _context.Jobs
+                    .Include(aj => aj.JobUsers)
+                    .ThenInclude(ju => ju.User).ToList();
+
+                var jobsWithUserDto = availJobsWithUser
+                    .Select(aj => new DisplayJobWithUserDto
                     {
-                        Location = job.Location,
-                        JobName = job.JobName,
-                        SkillLevel = job.SkillLevel,
-                        JobDescription = job.JobDescription,
-                        PayPerHour = job.PayPerHour,
-                        PostedByUser = (UserForDisplayDto)job.Users
-                        .Select(u => new UserForDisplayDto
+                        Id = aj.Id,
+                        Location = aj.Location,
+                        JobName = aj.JobName,
+                        SkillLevel = aj.SkillLevel,
+                        JobDescription = aj.JobDescription,
+                        PayPerHour = aj.PayPerHour,
+                        PostedByUser = new UserForDisplayDto
                         {
-                            Id = u.Id,
-                            Name = u.FirstName,
-                            UserName = u.UserName,
-                        }),
-                    }).ToList();
-               
-                return StatusCode(201, availableJobs);                        
+                            Id = aj.PostingUserId,
+                            Name = aj.JobUsers.FirstOrDefault()?.User.FirstName,  
+                            UserName = aj.JobUsers.FirstOrDefault()?.User.UserName
+                                //  -The .FirstOrDefault() is how to break a collection down to a single element 
+                                // in order to acccess its properties.
+                                //  -The question marks are conditionals for error handling. If the method
+                                // before it is null, it will return null instead of continuing until error. 
+                        }
+                    }).ToList() ;
+                
+                return StatusCode(200, jobsWithUserDto);                        
             }
             catch (Exception ex)
             {
@@ -76,20 +96,34 @@ namespace FullStackAuth_WebAPI.Controllers
             try
             {
                 string userId = User.FindFirstValue("id");
+                
 
                 if (string.IsNullOrEmpty(userId))
                 {
                     return Unauthorized();
                 }
-                _context.Jobs.Add(data);
+                User user = _context.Users.Find(userId);
+                data.PostingUserId = userId;
                 
+                    
+                //    new JobUser()
+                //{ User = user, UserId = userId, Job = data };
+                
+               
+                _context.Jobs.Add(data);
+                _context.SaveChanges();
+                var jobUser = new JobUser() { User = user, Job = data };
+                _context.JobUsers.Add(jobUser);
+                _context.SaveChanges();
+
+
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
                 }
                 _context.SaveChanges();
                 
-                return StatusCode(201, data);  //check response, if 'data' sends entire User info, change this response.
+                return StatusCode(201, "Job has been posted");  //check response, if 'data' sends entire User info, change this response.
             }
             catch (Exception ex)
             {

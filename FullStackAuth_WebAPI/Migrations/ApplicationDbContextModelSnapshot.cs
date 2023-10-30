@@ -19,6 +19,25 @@ namespace FullStackAuth_WebAPI.Migrations
                 .HasAnnotation("ProductVersion", "7.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("FullStackAuth_WebAPI.DataTransferObjects.UserForDisplayDto", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserForDisplayDto");
+                });
+
             modelBuilder.Entity("FullStackAuth_WebAPI.Models.Car", b =>
                 {
                     b.Property<int>("Id")
@@ -67,13 +86,33 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.Property<double>("PayPerHour")
                         .HasColumnType("double");
 
+                    b.Property<string>("PostingUserId")
+                        .HasColumnType("varchar(255)");
+
                     b.Property<string>("SkillLevel")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PostingUserId");
+
                     b.ToTable("Jobs");
+                });
+
+            modelBuilder.Entity("FullStackAuth_WebAPI.Models.JobUser", b =>
+                {
+                    b.Property<int>("JobId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("JobId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("JobUsers");
                 });
 
             modelBuilder.Entity("FullStackAuth_WebAPI.Models.Review", b =>
@@ -171,6 +210,9 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<int?>("ReviewId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("longtext");
 
@@ -196,22 +238,9 @@ namespace FullStackAuth_WebAPI.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
+                    b.HasIndex("ReviewId");
+
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("JobUser", b =>
-                {
-                    b.Property<int>("JobsId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UsersId")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("JobsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("JobUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -242,13 +271,13 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "04dc0c4e-4ffe-46b4-9d66-85bea041d89a",
+                            Id = "a4637879-d935-4eea-abd6-ded1c28ace20",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "9c4676d8-1272-4c00-b392-5df142f3bbcf",
+                            Id = "7ffb201f-5229-45bf-8e13-c606692a4439",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -356,21 +385,6 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ReviewUser", b =>
-                {
-                    b.Property<int>("ReviewsId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UsersId")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("ReviewsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("ReviewUser");
-                });
-
             modelBuilder.Entity("FullStackAuth_WebAPI.Models.Car", b =>
                 {
                     b.HasOne("FullStackAuth_WebAPI.Models.User", "Owner")
@@ -380,19 +394,39 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("JobUser", b =>
+            modelBuilder.Entity("FullStackAuth_WebAPI.Models.Job", b =>
                 {
-                    b.HasOne("FullStackAuth_WebAPI.Models.Job", null)
+                    b.HasOne("FullStackAuth_WebAPI.DataTransferObjects.UserForDisplayDto", "PostingUser")
                         .WithMany()
-                        .HasForeignKey("JobsId")
+                        .HasForeignKey("PostingUserId");
+
+                    b.Navigation("PostingUser");
+                });
+
+            modelBuilder.Entity("FullStackAuth_WebAPI.Models.JobUser", b =>
+                {
+                    b.HasOne("FullStackAuth_WebAPI.Models.Job", "Job")
+                        .WithMany("JobUsers")
+                        .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FullStackAuth_WebAPI.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
+                    b.HasOne("FullStackAuth_WebAPI.Models.User", "User")
+                        .WithMany("JobUsers")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Job");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FullStackAuth_WebAPI.Models.User", b =>
+                {
+                    b.HasOne("FullStackAuth_WebAPI.Models.Review", null)
+                        .WithMany("Users")
+                        .HasForeignKey("ReviewId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -446,19 +480,19 @@ namespace FullStackAuth_WebAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ReviewUser", b =>
+            modelBuilder.Entity("FullStackAuth_WebAPI.Models.Job", b =>
                 {
-                    b.HasOne("FullStackAuth_WebAPI.Models.Review", null)
-                        .WithMany()
-                        .HasForeignKey("ReviewsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("JobUsers");
+                });
 
-                    b.HasOne("FullStackAuth_WebAPI.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            modelBuilder.Entity("FullStackAuth_WebAPI.Models.Review", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("FullStackAuth_WebAPI.Models.User", b =>
+                {
+                    b.Navigation("JobUsers");
                 });
 #pragma warning restore 612, 618
         }

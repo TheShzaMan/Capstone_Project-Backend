@@ -2,6 +2,7 @@
 using FullStackAuth_WebAPI.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+ 
 
 namespace FullStackAuth_WebAPI.Data
 {
@@ -10,7 +11,8 @@ namespace FullStackAuth_WebAPI.Data
         public DbSet<Car> Cars { get; set; }
         public DbSet<Job> Jobs { get; set; }
         public DbSet<Review> Reviews { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<JobUser> JobUsers { get; set; }
+
 
 
 
@@ -25,6 +27,8 @@ namespace FullStackAuth_WebAPI.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new RolesConfiguration());
+            modelBuilder.Entity<JobUser>()
+                .HasKey(ju => new { ju.JobId, ju.UserId });
         }
     }
 }

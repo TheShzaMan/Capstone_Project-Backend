@@ -33,30 +33,40 @@ namespace FullStackAuth_WebAPI.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
+                name: "Jobs",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "varchar(255)", nullable: false),
-                    FirstName = table.Column<string>(type: "longtext", nullable: true),
-                    LastName = table.Column<string>(type: "longtext", nullable: true),
-                    UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "longtext", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "longtext", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "longtext", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "longtext", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Location = table.Column<string>(type: "longtext", nullable: false),
+                    JobName = table.Column<string>(type: "longtext", nullable: false),
+                    SkillLevel = table.Column<string>(type: "longtext", nullable: false),
+                    JobDescription = table.Column<string>(type: "longtext", nullable: false),
+                    PayPerHour = table.Column<double>(type: "double", nullable: false),
+                    PostingUserId = table.Column<string>(type: "longtext", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK_Jobs", x => x.Id);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Reviews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    AdherenceToAgreement = table.Column<int>(type: "int", nullable: false),
+                    WorkQuality = table.Column<int>(type: "int", nullable: true),
+                    Timeliness = table.Column<int>(type: "int", nullable: false),
+                    LikelinessOfRepeat = table.Column<int>(type: "int", nullable: false),
+                    Communication = table.Column<int>(type: "int", nullable: false),
+                    AdaptabilityRate = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reviews", x => x.Id);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -79,6 +89,48 @@ namespace FullStackAuth_WebAPI.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(255)", nullable: false),
+                    FirstName = table.Column<string>(type: "longtext", nullable: true),
+                    LastName = table.Column<string>(type: "longtext", nullable: true),
+                    IsWorker = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Area = table.Column<string>(type: "longtext", nullable: true),
+                    SkillLevel = table.Column<string>(type: "longtext", nullable: true),
+                    Availability = table.Column<string>(type: "longtext", nullable: true),
+                    WagePerHour = table.Column<double>(type: "double", nullable: false),
+                    Experience = table.Column<string>(type: "longtext", nullable: true),
+                    BusinessDescription = table.Column<string>(type: "longtext", nullable: true),
+                    IsAvailNow = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    ReviewId = table.Column<int>(type: "int", nullable: true),
+                    UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "longtext", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "longtext", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "longtext", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "longtext", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_Reviews_ReviewId",
+                        column: x => x.ReviewId,
+                        principalTable: "Reviews",
+                        principalColumn: "Id");
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -193,13 +245,38 @@ namespace FullStackAuth_WebAPI.Migrations
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "JobUsers",
+                columns: table => new
+                {
+                    JobId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobUsers", x => new { x.JobId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_JobUsers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_JobUsers_Jobs_JobId",
+                        column: x => x.JobId,
+                        principalTable: "Jobs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "02826bcd-2b15-4c0a-8d85-281ade12b9b9", null, "Admin", "ADMIN" },
-                    { "59de2413-2986-49fa-a7ea-d2ee9bae8830", null, "User", "USER" }
+                    { "62e6f431-10ae-40e0-a0eb-99e20c53c602", null, "Admin", "ADMIN" },
+                    { "7688f7c2-01bd-4814-bf51-9a4241534d0c", null, "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -234,6 +311,11 @@ namespace FullStackAuth_WebAPI.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_ReviewId",
+                table: "AspNetUsers",
+                column: "ReviewId");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
@@ -243,6 +325,11 @@ namespace FullStackAuth_WebAPI.Migrations
                 name: "IX_Cars_OwnerId",
                 table: "Cars",
                 column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JobUsers_UserId",
+                table: "JobUsers",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -267,10 +354,19 @@ namespace FullStackAuth_WebAPI.Migrations
                 name: "Cars");
 
             migrationBuilder.DropTable(
+                name: "JobUsers");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Jobs");
+
+            migrationBuilder.DropTable(
+                name: "Reviews");
         }
     }
 }
