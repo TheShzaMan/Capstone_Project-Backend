@@ -34,19 +34,6 @@ namespace FullStackAuth_WebAPI.Controllers
         {
             try
             {
-                //    var availableJobs = _context.Jobs                    
-                //        .Include(j => j.JobUsers)
-                //        .Where(j => j.JobUsers.Count < 2);
-                //    var postingUserId = _context.JobUsers
-                //        .Select(ju => ju.UserId);
-
-                //        .Select(u => new UserForDisplayDto
-                //        {
-                //            Id = u.Id,
-                //            Name = u.FirstName,
-                //            UserName = u.UserName
-                //        }).Single();
-
                 var availJobsWithUser = _context.Jobs
                     .Include(aj => aj.JobUsers)
                     .ThenInclude(ju => ju.User).ToList();
@@ -97,33 +84,47 @@ namespace FullStackAuth_WebAPI.Controllers
             {
                 string userId = User.FindFirstValue("id");
                 
-
                 if (string.IsNullOrEmpty(userId))
                 {
                     return Unauthorized();
                 }
+                
                 User user = _context.Users.Find(userId);
+                if (user.IsWorker)
+                {
+                    return Unauthorized();
+                }
+                
                 data.PostingUserId = userId;
-                
-                    
-                //    new JobUser()
-                //{ User = user, UserId = userId, Job = data };
-                
-               
                 _context.Jobs.Add(data);
-                _context.SaveChanges();
-                var jobUser = new JobUser() { User = user, Job = data };
-                _context.JobUsers.Add(jobUser);
-                _context.SaveChanges();
-
-
+               
+                
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
                 }
                 _context.SaveChanges();
                 
-                return StatusCode(201, "Job has been posted");  //check response, if 'data' sends entire User info, change this response.
+                var jobUser = new JobUser() { User = user, Job = data};
+                _context.JobUsers.Add(jobUser);
+                _context.SaveChanges();
+
+                var newJobAsDto = new DisplayJobWithUserDto
+                {
+                    Id = data.Id,
+                    Location = data.Location,
+                    JobName = data.JobName,
+                    SkillLevel = data.SkillLevel,
+                    JobDescription = data.JobDescription,
+                    PayPerHour = data.PayPerHour,
+                    PostedByUser = new UserForDisplayDto
+                    {
+                        Id = userId,
+                        Name = user.FirstName,
+                        UserName = user.UserName
+                    }
+                };
+                return StatusCode(201, newJobAsDto); 
             }
             catch (Exception ex)
             {
@@ -131,10 +132,70 @@ namespace FullStackAuth_WebAPI.Controllers
             }
         }
 
+            // ** Edit an active job ** \\
+
         // PUT api/jobs/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{id}"), Authorize]
+        public IActionResult Put(int id, [FromBody] Job data)
         {
+            try
+            {
+
+                Job job = _context.Jobs
+                    .Include(j => j.JobUsers)
+                    .ThenInclude(ju => ju.User)
+                    .FirstOrDefault(j => j.Id == id);
+
+                if (job == null)
+                {
+                    return NotFound();
+                }
+
+                var userId = User.FindFirstValue("id");
+                if (string.IsNullOrEmpty(userId) || job.PostingUserId != userId)
+                {
+                    return Unauthorized();
+                }
+                User user = _context.Users.Find(userId);
+                if (user.IsWorker)
+                {
+                    return Unauthorized();
+                }
+
+                job.PostingUserId = userId;
+                job.Location = data.Location;
+                job.JobName = data.JobName;
+                job.SkillLevel = data.SkillLevel;
+                job.JobDescription = data.JobDescription;
+                job.PayPerHour = data.PayPerHour;
+                if(!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                _context.SaveChanges();
+
+                var updatedJobAsDto = new DisplayJobWithUserDto
+                {
+                    Id = job.Id,
+                    Location = job.Location,
+                    JobName = job.JobName,
+                    SkillLevel = job.SkillLevel,
+                    JobDescription = job.JobDescription,
+                    PayPerHour = job.PayPerHour,
+                    PostedByUser = new UserForDisplayDto
+                    {
+                        Id = userId,
+                        Name = user.FirstName,
+                        UserName = user.UserName,
+                    }
+                };
+
+                return StatusCode(201, updatedJobAsDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // DELETE api/jobs/5
