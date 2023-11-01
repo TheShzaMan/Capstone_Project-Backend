@@ -3,6 +3,7 @@ using System;
 using FullStackAuth_WebAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FullStackAuth_WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231031175820_RemovingJoinerClasses")]
+    partial class RemovingJoinerClasses
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,6 +69,9 @@ namespace FullStackAuth_WebAPI.Migrations
 
                     b.Property<double>("PayPerHour")
                         .HasColumnType("double");
+
+                    b.Property<string>("PostingUserId")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("SkillLevel")
                         .IsRequired()
@@ -245,13 +251,13 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "dc4ebe40-d209-44cc-885e-dc57054ad2b3",
+                            Id = "adb3011c-7a91-4076-9f74-eb46fd06f3a2",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "549fcdcc-f9bf-4511-9b1c-3320bf26218b",
+                            Id = "209352d4-f4ca-499c-a6c2-db50e21b8b79",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

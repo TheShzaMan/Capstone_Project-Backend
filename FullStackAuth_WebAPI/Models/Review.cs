@@ -5,7 +5,6 @@ using FullStackAuth_WebAPI.DataTransferObjects;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace FullStackAuth_WebAPI.Models
-
 {
     public class Review
     {
@@ -24,11 +23,12 @@ namespace FullStackAuth_WebAPI.Models
         public int Communication { get; set; }
         
         public  int? AdaptabilityRate { get; set; }
-
         
-
+        public string? ReviewSubjectId {  get; set; }
 
         public virtual ICollection<User> Users { get; set; }
+        //public virtual ICollection<ReviewUser> ReviewUsers { get; set; }
+
 
 
         //[ForeignKey("User")]

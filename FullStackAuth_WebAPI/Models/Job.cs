@@ -25,11 +25,11 @@ namespace FullStackAuth_WebAPI.Models
 
         [Required]
         public double PayPerHour { get; set; }
-        public string? PostingUserId { get; set; }
 
         //public User postingUser { get; set; }
        
-        public virtual ICollection<JobUser> JobUsers { get; set; }
+       // public virtual ICollection<JobUser> JobUsers { get; set; }
+        public virtual ICollection<User> Users { get; set; }
 
 
 

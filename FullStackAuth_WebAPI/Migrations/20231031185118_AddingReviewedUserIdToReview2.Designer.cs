@@ -3,6 +3,7 @@ using System;
 using FullStackAuth_WebAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FullStackAuth_WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231031185118_AddingReviewedUserIdToReview2")]
+    partial class AddingReviewedUserIdToReview2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,6 +69,9 @@ namespace FullStackAuth_WebAPI.Migrations
 
                     b.Property<double>("PayPerHour")
                         .HasColumnType("double");
+
+                    b.Property<string>("PostingUserId")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("SkillLevel")
                         .IsRequired()
@@ -245,13 +251,13 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "dc4ebe40-d209-44cc-885e-dc57054ad2b3",
+                            Id = "91b6d208-21da-416c-9e5e-8a9a1c102b02",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "549fcdcc-f9bf-4511-9b1c-3320bf26218b",
+                            Id = "04ad4f5c-94e6-4fd6-bba1-806e88e03bd9",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

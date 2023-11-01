@@ -6,6 +6,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20231030143455_init.cs" />
+    <Compile Remove="Migrations\20231030143455_init.Designer.cs" />
+    <Compile Remove="Migrations\20231030191157_AddingDtoToJobModel.cs" />
+    <Compile Remove="Migrations\20231030191157_AddingDtoToJobModel.Designer.cs" />
+    <Compile Remove="Migrations\20231031163241_AddingReviewUsersTable.cs" />
+    <Compile Remove="Migrations\20231031163241_AddingReviewUsersTable.Designer.cs" />
+    <Compile Remove="Migrations\20231031165955_AddingReviewUsersTableRedo.cs" />
+    <Compile Remove="Migrations\20231031165955_AddingReviewUsersTableRedo.Designer.cs" />
+    <Compile Remove="Migrations\20231031175820_RemovingJoinerClasses.cs" />
+    <Compile Remove="Migrations\20231031175820_RemovingJoinerClasses.Designer.cs" />
+    <Compile Remove="Migrations\20231031182347_AddingReviewedUserIdToReview.cs" />
+    <Compile Remove="Migrations\20231031182347_AddingReviewedUserIdToReview.Designer.cs" />
+    <Compile Remove="Migrations\20231031185118_AddingReviewedUserIdToReview2.cs" />
+    <Compile Remove="Migrations\20231031185118_AddingReviewedUserIdToReview2.Designer.cs" />
+    <Compile Remove="Migrations\20231031185840_MakingReviewSubjectIdNullable.cs" />
+    <Compile Remove="Migrations\20231031185840_MakingReviewSubjectIdNullable.Designer.cs" />
+    <Compile Remove="Migrations\ApplicationDbContextModelSnapshot.cs" />
+    <Compile Remove="Models\JobUser.cs" />
+    <Compile Remove="Models\ReviewUser.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.7" />
@@ -19,6 +41,10 @@
     <PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.2" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

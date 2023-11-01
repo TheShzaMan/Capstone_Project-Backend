@@ -3,6 +3,7 @@ using System;
 using FullStackAuth_WebAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FullStackAuth_WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231031163241_AddingReviewUsersTable")]
+    partial class AddingReviewUsersTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,6 +70,9 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.Property<double>("PayPerHour")
                         .HasColumnType("double");
 
+                    b.Property<string>("PostingUserId")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("SkillLevel")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -74,6 +80,21 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Jobs");
+                });
+
+            modelBuilder.Entity("FullStackAuth_WebAPI.Models.JobUser", b =>
+                {
+                    b.Property<int>("JobId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("JobId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("JobUsers");
                 });
 
             modelBuilder.Entity("FullStackAuth_WebAPI.Models.Review", b =>
@@ -94,9 +115,6 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.Property<int>("LikelinessOfRepeat")
                         .HasColumnType("int");
 
-                    b.Property<string>("ReviewSubjectId")
-                        .HasColumnType("longtext");
-
                     b.Property<int>("Timeliness")
                         .HasColumnType("int");
 
@@ -106,6 +124,24 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("FullStackAuth_WebAPI.Models.ReviewUser", b =>
+                {
+                    b.Property<int>("ReviewId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<bool>("IsCreator")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("ReviewId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ReviewUsers");
                 });
 
             modelBuilder.Entity("FullStackAuth_WebAPI.Models.User", b =>
@@ -202,21 +238,6 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("JobUser", b =>
-                {
-                    b.Property<int>("JobsId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UsersId")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("JobsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("JobUser");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -245,13 +266,13 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "dc4ebe40-d209-44cc-885e-dc57054ad2b3",
+                            Id = "a7f213cc-f7aa-4dd2-b343-e14725623d5b",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "549fcdcc-f9bf-4511-9b1c-3320bf26218b",
+                            Id = "606966c6-ef07-4b9b-be3b-1200aa0a66a3",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -359,21 +380,6 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ReviewUser", b =>
-                {
-                    b.Property<int>("ReviewsId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UsersId")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("ReviewsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("ReviewUser");
-                });
-
             modelBuilder.Entity("FullStackAuth_WebAPI.Models.Car", b =>
                 {
                     b.HasOne("FullStackAuth_WebAPI.Models.User", "Owner")
@@ -383,19 +389,42 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("JobUser", b =>
+            modelBuilder.Entity("FullStackAuth_WebAPI.Models.JobUser", b =>
                 {
-                    b.HasOne("FullStackAuth_WebAPI.Models.Job", null)
-                        .WithMany()
-                        .HasForeignKey("JobsId")
+                    b.HasOne("FullStackAuth_WebAPI.Models.Job", "Job")
+                        .WithMany("JobUsers")
+                        .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FullStackAuth_WebAPI.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
+                    b.HasOne("FullStackAuth_WebAPI.Models.User", "User")
+                        .WithMany("JobUsers")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Job");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FullStackAuth_WebAPI.Models.ReviewUser", b =>
+                {
+                    b.HasOne("FullStackAuth_WebAPI.Models.Review", "Review")
+                        .WithMany("ReviewUsers")
+                        .HasForeignKey("ReviewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FullStackAuth_WebAPI.Models.User", "User")
+                        .WithMany("ReviewUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Review");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -449,19 +478,21 @@ namespace FullStackAuth_WebAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ReviewUser", b =>
+            modelBuilder.Entity("FullStackAuth_WebAPI.Models.Job", b =>
                 {
-                    b.HasOne("FullStackAuth_WebAPI.Models.Review", null)
-                        .WithMany()
-                        .HasForeignKey("ReviewsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("JobUsers");
+                });
 
-                    b.HasOne("FullStackAuth_WebAPI.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            modelBuilder.Entity("FullStackAuth_WebAPI.Models.Review", b =>
+                {
+                    b.Navigation("ReviewUsers");
+                });
+
+            modelBuilder.Entity("FullStackAuth_WebAPI.Models.User", b =>
+                {
+                    b.Navigation("JobUsers");
+
+                    b.Navigation("ReviewUsers");
                 });
 #pragma warning restore 612, 618
         }
