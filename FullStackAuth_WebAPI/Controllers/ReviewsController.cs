@@ -4,6 +4,7 @@ using FullStackAuth_WebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
 using System.Security.Claims;
 
@@ -46,15 +47,52 @@ namespace FullStackAuth_WebAPI.Controllers
                 var reviewedUser = _context.Users.Find(reviewedUserId);
 
                 var reviewsOfReviewedUser = _context.Reviews.Where(r => r.ReviewSubjectId == reviewedUserId).ToList();
-                    
-                    
-                    //.Include(r => r.Users).Where(r => r.ReviewSubjectId == r.Users.FirstOrDefault().Id);
-                //.Where(r => r.ReviewUsers.FirstOrDefault().UserId.Equals(reviewedUserid));
+                
+              //    return Ok(reviewsOfReviewedUser);     //placed for testing purpose. Continue with building the dto               
+                var reviewTotalScore = new List<int>();
+                reviewTotalScore.Add(reviewsOfReviewedUser.Sum(r => r.AdherenceToAgreement));
+                reviewTotalScore.Add(reviewsOfReviewedUser.Sum(r => r.Timeliness));
+                reviewTotalScore.Add(reviewsOfReviewedUser.Sum(r => r.LikelinessOfRepeat));
+                reviewTotalScore.Add(reviewsOfReviewedUser.Sum(r => r.Communication));
 
-                return Ok(reviewsOfReviewedUser);     //placed for testing purpose. Continue with building the dto               
+                var newResultsSummaryWithUserDto = new UserProfileWithReviewSummaryDto
+                {
+                    TotalReviewsJobs = reviewsOfReviewedUser.Count(),
+                    AvgAdherence = reviewsOfReviewedUser.Average(r => r.AdherenceToAgreement),
+                    AvgTimeliness = reviewsOfReviewedUser.Average(r => r.Timeliness),
+                    AvgWouldRepeat = reviewsOfReviewedUser.Average(r => r.LikelinessOfRepeat),
+                    AvgCommunication = reviewsOfReviewedUser.Average(r => r.Communication),
+                    IsWorker = reviewedUser.IsWorker,
+                    AvgOverallScore = reviewTotalScore.Average(),
+                    User = new UserForProfileDto
+                    {
+                        Id = userId,
+                        FirstName = reviewedUser.FirstName,
+                        LastName = reviewedUser.LastName,
+                        IsWorker = reviewedUser.IsWorker,
+                        UserName = reviewedUser.UserName,
+                        PhoneNumber = reviewedUser.PhoneNumber,
+                        Email = reviewedUser.Email,
+                        Area = reviewedUser.Area,
+                        SkillLevel = reviewedUser.SkillLevel,
+                        Availability = reviewedUser?.Availability,
+                        WagePerHour = reviewedUser.WagePerHour,
+                        Experience = reviewedUser?.Experience,
+                        BusinessDescription = reviewedUser?.BusinessDescription,
+                        IsAvailNow = reviewedUser?.IsAvailNow
 
-                var newResultsSummaryWithUserDto = new UserProfileWithReviewSummaryDto(); //needs to be mapped out
-                return Ok(newResultsSummaryWithUserDto);
+                    }
+                }; 
+                if (reviewedUser.IsWorker)
+                {
+                    newResultsSummaryWithUserDto.AvgQuality = reviewsOfReviewedUser.Average(r => r.WorkQuality).GetValueOrDefault();
+                    newResultsSummaryWithUserDto.AvgAdaptability = reviewsOfReviewedUser.Average(r => r.AdaptabilityRate);
+                }
+                if (reviewsOfReviewedUser.Count() >= 1)
+                {
+                    return Ok(newResultsSummaryWithUserDto);
+                }
+                else { return Ok(newResultsSummaryWithUserDto.User); }
             }
             catch (Exception ex)
             {
@@ -77,7 +115,6 @@ namespace FullStackAuth_WebAPI.Controllers
                     return Unauthorized();
                 }
                 
-
                 var reviewCreator = _context.Users.Find(userId);
                 
                 var reviewedUser = _context.Users.Find(reviewedUserId);
@@ -93,6 +130,7 @@ namespace FullStackAuth_WebAPI.Controllers
                     ReviewSubjectId = reviewedUserId,
                     Users = new List<User> { reviewedUser, reviewCreator }
                 };
+                
                 _context.Reviews.Add(newReview);
 
                 if (!ModelState.IsValid)
@@ -101,11 +139,7 @@ namespace FullStackAuth_WebAPI.Controllers
                 }
                 _context.SaveChanges();
 
-                //var reviewUserCreator = new ReviewUser() { User = reviewCreator, Review = data, IsCreator = true };
-                //_context.ReviewUsers.Add(reviewUserCreator);
-                //var reviewUserSubject = new ReviewUser() { User = reviewedUser, Review = data, IsCreator = false };
-                //_context.ReviewUsers.Add(reviewUserSubject);
-                //_context.SaveChanges();
+                _context.SaveChanges();
 
                 var newReviewAsDto = new ReviewAsDto
                 {
@@ -130,7 +164,6 @@ namespace FullStackAuth_WebAPI.Controllers
                     }
                 };
                 return StatusCode(201, newReviewAsDto);
-                
             }
             catch (Exception ex)
             {
