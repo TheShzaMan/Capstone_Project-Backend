@@ -4,6 +4,7 @@ using FullStackAuth_WebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -79,11 +80,83 @@ namespace FullStackAuth_WebAPI.Controllers
             }
         }
 
+        // ** Get list of all Jobs ** \\
+
+        // GET: api/Jobs
+        [HttpGet]
+        public IActionResult GetAllJobs()
+        {
+            try
+            {
+                
+                var jobs = _context.Jobs.Include(j => j.Users).Select(j => new DisplayJobWithUserDto
+                {
+                    Id = j.Id,
+                    Location = j.Location,
+                    JobName = j.JobName,
+                    SkillLevel = j.SkillLevel,
+                    JobDescription = j.JobDescription,
+                    PayPerHour = j.PayPerHour,
+                    PostedByUser = new UserForDisplayDto
+                    {
+                        Id = j.PostedByUserId,
+                        Name = j.Users.First().FirstName,
+                        UserName = j.Users.First().UserName,
+                    },
+                    AcceptedByUser = new UserForDisplayDto
+                    {
+                        UserName = j.Users.FirstOrDefault(u => u.Id != j.PostedByUserId).UserName
+                    }
+                }).ToList();
+
+               
+                return StatusCode(200, jobs);
+            }
+            catch (Exception ex)
+            {
+                // If an error occurs, return a 500 internal server error with the error message
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        // ** Get job with posting user profile by job id ** \\
+
         // GET api/jobs/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult Get(int id)
         {
-            return "value";
+            try
+            {
+                var job = _context.Jobs.Include(j => j.Users).FirstOrDefault(j => j.Id == id);
+               
+                if (job == null)
+                {
+                    return NotFound();
+                }
+                var postingUser = job.Users.First(u => u.Id == job.PostedByUserId);
+                var jobDto = new DisplayJobWithUserDto
+                {
+                    Id = job.Id,
+                    Location = job.Location,
+                    JobName = job.JobName,
+                    SkillLevel = job.SkillLevel,
+                    JobDescription = job.JobDescription,
+                    PayPerHour = job.PayPerHour,
+                    PostedByProfile = new UserForProfileDto
+                    {
+                        FirstName = postingUser.FirstName,
+                        UserName = postingUser.UserName,
+                        Email = postingUser.Email,
+                        PhoneNumber = postingUser.PhoneNumber,
+                        BusinessDescription = postingUser.BusinessDescription,
+                    }
+                };
+                return StatusCode(200, jobDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
             // ** Post a New Job ** \\
@@ -110,17 +183,9 @@ namespace FullStackAuth_WebAPI.Controllers
                 }
 
 
-                var newJobPost = new Job
-                {
-                    Location = data.Location,
-                    JobName = data.JobName,
-                    SkillLevel = data.SkillLevel,
-                    JobDescription = data.JobDescription,
-                    PayPerHour = data.PayPerHour,
-                    Users = new List<User> { postingUser }
-                };
+                data.PostedByUserId = userId;
                
-                _context.Jobs.Add(newJobPost);
+                _context.Jobs.Add(data);
                 
                 if (!ModelState.IsValid)
                 {
@@ -131,17 +196,17 @@ namespace FullStackAuth_WebAPI.Controllers
               
                 var newJobAsDto = new DisplayJobWithUserDto
                 {
-                    Id = newJobPost.Id,
-                    Location = newJobPost.Location,
-                    JobName = newJobPost.JobName,
-                    SkillLevel = newJobPost.SkillLevel,
-                    JobDescription = newJobPost.JobDescription,
-                    PayPerHour = newJobPost.PayPerHour,
+                    Id = data.Id,
+                    Location = data.Location,
+                    JobName = data.JobName,
+                    SkillLevel = data.SkillLevel,
+                    JobDescription = data.JobDescription,
+                    PayPerHour = data.PayPerHour,
                     PostedByUser = new UserForDisplayDto
                     {
                         Id = userId,
                         Name = postingUser.FirstName,
-                        UserName = postingUser.UserName
+                        UserName = postingUser.UserName,                       
                     }
                 };
                 return StatusCode(201, newJobAsDto);
@@ -153,9 +218,73 @@ namespace FullStackAuth_WebAPI.Controllers
             }
         }
 
-            // ** Edit an active job ** \\
+        // ** Add or remove AcceptedByUser to active job after accepted by ** \\
 
-        // PUT api/jobs/5
+        // PUT api/Jobs/5
+        [HttpPut("{id}"), Authorize]
+        public IActionResult PutAcceptedByUser(int id)
+        {
+            try
+            {
+                // is registered user ?
+                var userId = User.FindFirstValue("id");
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized();
+                }
+                // is not a worker user ?
+                User user = _context.Users.Find(userId);
+                if (!user.IsWorker)
+                {
+                    return Unauthorized();
+                }
+                // there is in fact a job with an id that matches the id sent ?
+                Job job = _context.Jobs.Include(j => j.Users).FirstOrDefault(j => j.Id == id);
+                if (job == null)
+                {
+                    return NotFound();
+                }
+                var acceptedByUser = new User();
+                job.Users.Add(acceptedByUser);
+                
+                _context.SaveChanges();
+
+                var postedByUser = job.Users.First(u => u.Id == job.PostedByUserId);
+
+                var updatedAcceptedByUser = new DisplayJobWithUserDto
+                {
+                    Id = job.Id,
+                    Location = job.Location,
+                    JobName = job.JobName,
+                    SkillLevel = job.SkillLevel,
+                    JobDescription = job.JobDescription,
+                    PayPerHour = job.PayPerHour,
+                    PostedByUser = new UserForDisplayDto
+                    {
+                        Id = job.PostedByUserId,
+                        Name = postedByUser.FirstName,
+                        UserName = postedByUser.UserName,
+                    },
+                    AcceptedByUser = new UserForDisplayDto
+                    {
+                        Id = acceptedByUser.Id,
+                        Name = acceptedByUser.FirstName,
+                        UserName = acceptedByUser.UserName,
+                    }
+
+                };
+                return StatusCode(201, updatedAcceptedByUser);
+            }            
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        // ** Edit an active job ** \\
+
+        // PUT api/Jobs/5
         [HttpPut("{id}"), Authorize]
         public IActionResult Put(int id, [FromBody] Job data)
         {
@@ -185,6 +314,7 @@ namespace FullStackAuth_WebAPI.Controllers
                 job.SkillLevel = data.SkillLevel;
                 job.JobDescription = data.JobDescription;
                 job.PayPerHour = data.PayPerHour;
+                job.PostedByUserId = job.PostedByUserId;
                 if(!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);

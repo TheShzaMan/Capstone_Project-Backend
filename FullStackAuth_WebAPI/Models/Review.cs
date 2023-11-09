@@ -1,7 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Identity;
-using FullStackAuth_WebAPI.DataTransferObjects;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace FullStackAuth_WebAPI.Models
@@ -24,10 +21,10 @@ namespace FullStackAuth_WebAPI.Models
         
         public  int? AdaptabilityRate { get; set; }
         
-        public string? ReviewSubjectId {  get; set; }
-
+        public string? ReviewedUserId {  get; set; }   // Even though Reviews stores pointers to Users, this makes querying easier.
+        
         public virtual ICollection<User> Users { get; set; }
-        //public virtual ICollection<ReviewUser> ReviewUsers { get; set; }
+       
 
 
 

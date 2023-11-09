@@ -12,5 +12,8 @@ namespace FullStackAuth_WebAPI.DataTransferObjects
         public double PayPerHour { get; set; }
 
         public UserForDisplayDto PostedByUser { get; set; }
+        public UserForDisplayDto AcceptedByUser { get; set; }
+        public UserForProfileDto PostedByProfile { get; set; }
     }
+
 }

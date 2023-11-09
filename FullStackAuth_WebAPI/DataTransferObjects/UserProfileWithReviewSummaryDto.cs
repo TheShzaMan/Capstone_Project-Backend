@@ -12,7 +12,6 @@ namespace FullStackAuth_WebAPI.DataTransferObjects
         public double AvgWouldRepeat { get; set; }
         public double AvgCommunication { get; set; }
         public double? AvgAdaptability { get; set; }
-        public bool IsWorker { get; set; }
 
         public UserForProfileDto User { get; set; }
 

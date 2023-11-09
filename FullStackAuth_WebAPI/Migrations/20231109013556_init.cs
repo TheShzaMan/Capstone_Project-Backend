@@ -43,7 +43,7 @@ namespace FullStackAuth_WebAPI.Migrations
                     Area = table.Column<string>(type: "longtext", nullable: true),
                     SkillLevel = table.Column<string>(type: "longtext", nullable: true),
                     Availability = table.Column<string>(type: "longtext", nullable: true),
-                    WagePerHour = table.Column<double>(type: "double", nullable: false),
+                    PayPerHour = table.Column<double>(type: "double", nullable: false),
                     Experience = table.Column<string>(type: "longtext", nullable: true),
                     BusinessDescription = table.Column<string>(type: "longtext", nullable: true),
                     IsAvailNow = table.Column<bool>(type: "tinyint(1)", nullable: true),
@@ -78,7 +78,8 @@ namespace FullStackAuth_WebAPI.Migrations
                     JobName = table.Column<string>(type: "longtext", nullable: false),
                     SkillLevel = table.Column<string>(type: "longtext", nullable: false),
                     JobDescription = table.Column<string>(type: "longtext", nullable: false),
-                    PayPerHour = table.Column<double>(type: "double", nullable: false)
+                    PayPerHour = table.Column<double>(type: "double", nullable: false),
+                    PostedByUserId = table.Column<string>(type: "longtext", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -98,7 +99,7 @@ namespace FullStackAuth_WebAPI.Migrations
                     LikelinessOfRepeat = table.Column<int>(type: "int", nullable: false),
                     Communication = table.Column<int>(type: "int", nullable: false),
                     AdaptabilityRate = table.Column<int>(type: "int", nullable: true),
-                    ReviewSubjectId = table.Column<string>(type: "longtext", nullable: true)
+                    ReviewedUserId = table.Column<string>(type: "longtext", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -294,8 +295,8 @@ namespace FullStackAuth_WebAPI.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "549fcdcc-f9bf-4511-9b1c-3320bf26218b", null, "Admin", "ADMIN" },
-                    { "dc4ebe40-d209-44cc-885e-dc57054ad2b3", null, "User", "USER" }
+                    { "5c1b4f60-2d88-44e0-acda-aec96edca288", null, "Admin", "ADMIN" },
+                    { "7ae11980-5dd3-4066-9f42-3e3388ff3d15", null, "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(

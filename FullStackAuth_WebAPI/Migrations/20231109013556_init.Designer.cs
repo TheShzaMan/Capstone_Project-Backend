@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FullStackAuth_WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231101035636_init")]
+    [Migration("20231109013556_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -70,6 +70,9 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.Property<double>("PayPerHour")
                         .HasColumnType("double");
 
+                    b.Property<string>("PostedByUserId")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("SkillLevel")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -97,7 +100,7 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.Property<int>("LikelinessOfRepeat")
                         .HasColumnType("int");
 
-                    b.Property<string>("ReviewSubjectId")
+                    b.Property<string>("ReviewedUserId")
                         .HasColumnType("longtext");
 
                     b.Property<int>("Timeliness")
@@ -171,6 +174,9 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext");
 
+                    b.Property<double>("PayPerHour")
+                        .HasColumnType("double");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("longtext");
 
@@ -189,9 +195,6 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
-
-                    b.Property<double>("WagePerHour")
-                        .HasColumnType("double");
 
                     b.HasKey("Id");
 
@@ -248,13 +251,13 @@ namespace FullStackAuth_WebAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "dc4ebe40-d209-44cc-885e-dc57054ad2b3",
+                            Id = "7ae11980-5dd3-4066-9f42-3e3388ff3d15",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "549fcdcc-f9bf-4511-9b1c-3320bf26218b",
+                            Id = "5c1b4f60-2d88-44e0-acda-aec96edca288",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

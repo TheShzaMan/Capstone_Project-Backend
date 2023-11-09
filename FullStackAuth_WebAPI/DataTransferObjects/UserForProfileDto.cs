@@ -14,10 +14,10 @@ namespace FullStackAuth_WebAPI.DataTransferObjects
         public string PhoneNumber {  get; set; }
         public string Area { get; set; }
         public string SkillLevel { get; set; }
-        public string? Availability { get; set; }
-        public double WagePerHour { get; set; }
-        public string? Experience { get; set; }
-        public string? BusinessDescription { get; set; }
+        public string Availability { get; set; }
+        public double PayPerHour { get; set; }
+        public string Experience { get; set; }
+        public string BusinessDescription { get; set; }
         public bool? IsAvailNow { get; set; }
         //public List<DisplayReviewSummaryDto> ReviewsOfUser { get; set; }
     }

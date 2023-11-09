@@ -58,7 +58,7 @@ namespace FullStackAuth_WebAPI.Controllers
                 //Area = user.Area,
                 //SkillLevel = user.SkillLevel,
                 //Availability = user.Availability,
-                //WagePerHour = user.WagePerHour,
+                //PayPerHour = user.PayPerHour,
                 //Experience = user.Experience,
                 //BusinessDescription = user.BusinessDescription,
                 //IsAvailNow = user.IsAvailNow,

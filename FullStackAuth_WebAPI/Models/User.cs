@@ -11,7 +11,7 @@ namespace FullStackAuth_WebAPI.Models
         public string Area { get; set; }
         public string SkillLevel { get; set; }
         public string? Availability { get; set; }
-        public double WagePerHour { get; set; }
+        public double PayPerHour { get; set; }
         public string? Experience { get; set; }
         public string? BusinessDescription { get; set; }
         public bool? IsAvailNow { get; set; }
