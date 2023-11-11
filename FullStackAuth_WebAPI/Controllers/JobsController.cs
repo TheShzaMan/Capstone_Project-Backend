@@ -53,6 +53,12 @@ namespace FullStackAuth_WebAPI.Controllers
                         }
                     }).ToList();
 
+                return StatusCode(200, availJobsWithUser);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
                 //var jobsWithUserDto = availJobsWithUser
                 //    .Select(aj => new DisplayJobWithUserDto
                 //    {
@@ -74,12 +80,6 @@ namespace FullStackAuth_WebAPI.Controllers
                 //        }
                 // }).ToList() ;
 
-                return StatusCode(200, availJobsWithUser);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
         }
 
         // ** Get list of all Jobs ** \\
@@ -114,14 +114,13 @@ namespace FullStackAuth_WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                // If an error occurs, return a 500 internal server error with the error message
                 return StatusCode(500, ex.Message);
             }
         }
 
         // ** Get job with postingUser profile by job id ** \\
 
-        // GET api/Jobs/5
+        // GET api/Jobs/{jobId}
         [HttpGet("{jobId}"), Authorize]
         public IActionResult Get(int jobId)
         {
@@ -134,7 +133,6 @@ namespace FullStackAuth_WebAPI.Controllers
                     return Unauthorized();
                 }
                 var job = _context.Jobs.Include(j => j.Users).SingleOrDefault(j => j.Id == jobId);
-                //var job = _context.Jobs.Find(jobId);
                 if (job == null)
                 {
                     return NotFound();
@@ -163,7 +161,9 @@ namespace FullStackAuth_WebAPI.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
-        } // ** Get list of users of a job by id ** \\
+        } 
+        
+        // ** Get list of users of a job by id ** \\
 
         // GET api/Jobs/applied/{jobId
         [HttpGet("applied/{jobId}"), Authorize]
@@ -229,8 +229,6 @@ namespace FullStackAuth_WebAPI.Controllers
 
                 data.PostedByUserId = postingUser.Id;
                 data.Users.Add(postingUser);
-                //data.Users = new List<User> { postingUser };
-                
                 
                 _context.Jobs.Add(data);
 
@@ -258,7 +256,6 @@ namespace FullStackAuth_WebAPI.Controllers
                     }
                 };
                 return StatusCode(201, newJobAsDto);
-
             }
             catch (Exception ex)
             {
@@ -306,7 +303,6 @@ namespace FullStackAuth_WebAPI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        // need get request that will find all avail jobs that a user is the acceptedByUserId
        
         // ** Update AcceptedByUserId when job is offered ** \\
 
@@ -345,11 +341,12 @@ namespace FullStackAuth_WebAPI.Controllers
 
         // PUT api/Jobs/fulfill/{jobId}
         [HttpPut("fulfill/{jobId}/"), Authorize]
-        public IActionResult FulfillJob(int jobId, [FromBody] bool isFulfilled)
+        public IActionResult FulfillJob(int jobId)
         {
             try
             {
                 var job = _context.Jobs.Include(j => j.Users).FirstOrDefault(j => j.Id == jobId);
+                
                 // is registered user ?  User id matches AcceptedByUserId ?
                 var userId = User.FindFirstValue("id");
                 if (string.IsNullOrEmpty(userId) || userId != job.AcceptedByUserId)
@@ -362,7 +359,6 @@ namespace FullStackAuth_WebAPI.Controllers
                 _context.SaveChanges();
 
                 return Ok($"User {user.UserName} has accepted the job.");
-
             }
             catch (Exception ex)
             {
