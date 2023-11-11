@@ -122,7 +122,7 @@ namespace FullStackAuth_WebAPI.Controllers
         // ** Get job with postingUser profile by job id ** \\
 
         // GET api/Jobs/5
-        [HttpGet("{jobid}"), Authorize]
+        [HttpGet("{jobId}"), Authorize]
         public IActionResult Get(int jobId)
         {
             try
@@ -158,6 +158,45 @@ namespace FullStackAuth_WebAPI.Controllers
                     }
                 };
                 return StatusCode(200, jobDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        } // ** Get list of users of a job by id ** \\
+
+        // GET api/Jobs/applied/{jobId
+        [HttpGet("applied/{jobId}"), Authorize]
+        public IActionResult GetAppliedUsers(int jobId)
+        {
+            try
+            {
+                string userId = User.FindFirstValue("id");
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized();
+                }
+                var job = _context.Jobs.Include(j => j.Users).SingleOrDefault(j => j.Id == jobId);
+                if (job == null)
+                {
+                    return NotFound();
+                }
+                if (job.PostedByUserId != userId)
+                {
+                    return Unauthorized();
+                }
+
+                var postingUser = job.Users.First(u => u.Id == job.PostedByUserId);
+                var appliedUsers = job.Users.Where(u => u.Id != userId).ToList();
+                var appliedUsersDto = appliedUsers.Select(au => new UserForDisplayDto
+                {
+                    Id = au.Id,
+                    Name = au.FirstName,
+                    LastName = au.LastName,
+                    UserName = au.UserName
+                }).ToList();
+                return StatusCode(200, appliedUsersDto);
             }
             catch (Exception ex)
             {
@@ -227,7 +266,7 @@ namespace FullStackAuth_WebAPI.Controllers
             }
         }
 
-        // ** Add worker to list of job users to apply ** \\
+        // ** Worker wants to apply therefore added to list of job users** \\
 
         // PUT api/Jobs/apply/{jobId}
         [HttpPut("apply/{jobId}/"), Authorize]
@@ -294,7 +333,7 @@ namespace FullStackAuth_WebAPI.Controllers
                 job.AcceptedByUserId = offerToUserId;
                 
                 _context.SaveChanges(); 
-                return Ok($"Awaiting response from {offerToUser.UserName}");
+                return Ok($"Offer has been made. Awaiting response from {offerToUser.UserName}");
             }
             catch (Exception ex)
             {
