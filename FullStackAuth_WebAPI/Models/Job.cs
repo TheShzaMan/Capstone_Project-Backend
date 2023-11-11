@@ -28,10 +28,12 @@ namespace FullStackAuth_WebAPI.Models
 
         public string PostedByUserId { get; set; }
 
-        //public User postingUser { get; set; }
-       
-       // public virtual ICollection<JobUser> JobUsers { get; set; }
-        public virtual ICollection<User> Users { get; set; }
+        public string AcceptedByUserId { get; set; }
+        public bool IsFulfilled {  get; set; }
+
+
+        // public virtual ICollection<JobUser> JobUsers { get; set; }
+        public List<User> Users { get; } = new();
 
 
 

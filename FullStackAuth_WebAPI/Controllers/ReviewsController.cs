@@ -4,6 +4,7 @@ using FullStackAuth_WebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -55,7 +56,6 @@ namespace FullStackAuth_WebAPI.Controllers
                     SkillLevel = reviewedUser.SkillLevel,
                     Availability = reviewedUser?.Availability,
                     PayPerHour = reviewedUser.PayPerHour,
-                    Experience = reviewedUser?.Experience,
                     BusinessDescription = reviewedUser?.BusinessDescription,
                     IsAvailNow = reviewedUser?.IsAvailNow
 
@@ -92,7 +92,6 @@ namespace FullStackAuth_WebAPI.Controllers
                         SkillLevel = reviewedUser.SkillLevel,
                         Availability = reviewedUser?.Availability,
                         PayPerHour = reviewedUser.PayPerHour,
-                        Experience = reviewedUser?.Experience,
                         BusinessDescription = reviewedUser?.BusinessDescription,
                         IsAvailNow = reviewedUser?.IsAvailNow
                     }
@@ -132,7 +131,9 @@ namespace FullStackAuth_WebAPI.Controllers
                 var reviewCreator = _context.Users.Find(userId);                
                 var reviewedUser = _context.Users.Find(reviewedUserId);
 
-                data.ReviewedUserId = reviewedUserId; 
+                data.ReviewedUserId = reviewedUserId;
+                data.Users.Add(reviewedUser);
+                data.Users.Add(reviewCreator);
                 
                 _context.Reviews.Add(data);
 
@@ -146,7 +147,7 @@ namespace FullStackAuth_WebAPI.Controllers
 
                 var newReviewAsDto = new ReviewAsDto
                 {
-                    Id = data.Id,
+                    
                     AdherenceToAgreement = data.AdherenceToAgreement,
                     WorkQuality = data.WorkQuality,
                     Timeliness = data.Timeliness,

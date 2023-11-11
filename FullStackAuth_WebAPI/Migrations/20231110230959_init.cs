@@ -44,7 +44,6 @@ namespace FullStackAuth_WebAPI.Migrations
                     SkillLevel = table.Column<string>(type: "longtext", nullable: true),
                     Availability = table.Column<string>(type: "longtext", nullable: true),
                     PayPerHour = table.Column<double>(type: "double", nullable: false),
-                    Experience = table.Column<string>(type: "longtext", nullable: true),
                     BusinessDescription = table.Column<string>(type: "longtext", nullable: true),
                     IsAvailNow = table.Column<bool>(type: "tinyint(1)", nullable: true),
                     UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
@@ -79,7 +78,9 @@ namespace FullStackAuth_WebAPI.Migrations
                     SkillLevel = table.Column<string>(type: "longtext", nullable: false),
                     JobDescription = table.Column<string>(type: "longtext", nullable: false),
                     PayPerHour = table.Column<double>(type: "double", nullable: false),
-                    PostedByUserId = table.Column<string>(type: "longtext", nullable: true)
+                    PostedByUserId = table.Column<string>(type: "longtext", nullable: true),
+                    AcceptedByUserId = table.Column<string>(type: "longtext", nullable: true),
+                    IsFulfilled = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -295,8 +296,8 @@ namespace FullStackAuth_WebAPI.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "5c1b4f60-2d88-44e0-acda-aec96edca288", null, "Admin", "ADMIN" },
-                    { "7ae11980-5dd3-4066-9f42-3e3388ff3d15", null, "User", "USER" }
+                    { "00139a3c-5ace-4432-9888-83675b25381f", null, "Admin", "ADMIN" },
+                    { "1d78e6d4-807e-4789-b695-0f964539a304", null, "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(

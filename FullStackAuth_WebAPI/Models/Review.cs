@@ -22,8 +22,8 @@ namespace FullStackAuth_WebAPI.Models
         public  int? AdaptabilityRate { get; set; }
         
         public string? ReviewedUserId {  get; set; }   // Even though Reviews stores pointers to Users, this makes querying easier.
-        
-        public virtual ICollection<User> Users { get; set; }
+
+        public List<User> Users { get; } = new();
        
 
 
