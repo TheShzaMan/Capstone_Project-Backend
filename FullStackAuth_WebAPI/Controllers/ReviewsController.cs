@@ -43,23 +43,28 @@ namespace FullStackAuth_WebAPI.Controllers
                 var reviewedUser = _context.Users.Find(reviewedUserId);
                 var reviewsOfReviewedUser = _context.Reviews.Where(r => r.ReviewedUserId == reviewedUserId).ToList();               
                 var userReviewCount = reviewsOfReviewedUser.Count();
-                var userNoReviews = new UserForProfileDto
+                if (userReviewCount == 0)
                 {
-                    Id = userId,
-                    FirstName = reviewedUser.FirstName,
-                    LastName = reviewedUser.LastName,
-                    IsWorker = reviewedUser.IsWorker,
-                    UserName = reviewedUser.UserName,
-                    PhoneNumber = reviewedUser.PhoneNumber,
-                    Email = reviewedUser.Email,
-                    Area = reviewedUser.Area,
-                    SkillLevel = reviewedUser.SkillLevel,
-                    Availability = reviewedUser?.Availability,
-                    PayPerHour = reviewedUser.PayPerHour,
-                    BusinessDescription = reviewedUser?.BusinessDescription,
-                    IsAvailNow = reviewedUser?.IsAvailNow
+                    var userNoReviews = new UserForProfileDto
+                    {
+                        Id = reviewedUserId,
+                        FirstName = reviewedUser.FirstName,
+                        LastName = reviewedUser.LastName,
+                        IsWorker = reviewedUser.IsWorker,
+                        UserName = reviewedUser.UserName,
+                        PhoneNumber = reviewedUser.PhoneNumber,
+                        Email = reviewedUser.Email,
+                        Area = reviewedUser.Area,
+                        SkillLevel = reviewedUser.SkillLevel,
+                        Availability = reviewedUser?.Availability,
+                        PayPerHour = reviewedUser.PayPerHour,
+                        BusinessDescription = reviewedUser?.BusinessDescription,
+                        IsAvailNow = reviewedUser?.IsAvailNow,
+                        TotalReviews = userReviewCount
 
-                };
+                    };
+                    return Ok(userNoReviews); 
+                }
                 
 
                 var reviewTotalScore = new List<int>();
@@ -81,7 +86,7 @@ namespace FullStackAuth_WebAPI.Controllers
                     AvgOverallScore = avgOverall,                  
                     User = new UserForProfileDto
                     {
-                        Id = userId,
+                        Id = reviewedUserId,
                         FirstName = reviewedUser.FirstName,
                         LastName = reviewedUser.LastName,
                         IsWorker = reviewedUser.IsWorker,
@@ -93,19 +98,17 @@ namespace FullStackAuth_WebAPI.Controllers
                         Availability = reviewedUser?.Availability,
                         PayPerHour = reviewedUser.PayPerHour,
                         BusinessDescription = reviewedUser?.BusinessDescription,
-                        IsAvailNow = reviewedUser?.IsAvailNow
+                        IsAvailNow = reviewedUser?.IsAvailNow,
+                        TotalReviews = userReviewCount
                     }
                 }; 
                 if (reviewedUser.IsWorker)
                 {
                     newResultsSummaryWithUserDto.AvgQuality = reviewsOfReviewedUser.Average(r => r.WorkQuality).GetValueOrDefault();
                     newResultsSummaryWithUserDto.AvgAdaptability = reviewsOfReviewedUser.Average(r => r.AdaptabilityRate);
-                }
-                if (reviewsOfReviewedUser.Count() >= 1)
-                {
-                    return Ok(newResultsSummaryWithUserDto);
-                }
-                else { return Ok((userNoReviews, reviewsOfReviewedUser.Count())); }
+                }              
+               
+                return Ok(newResultsSummaryWithUserDto);               
             }
             catch (Exception ex)
             {

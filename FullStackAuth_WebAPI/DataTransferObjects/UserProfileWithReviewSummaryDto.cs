@@ -4,7 +4,7 @@ namespace FullStackAuth_WebAPI.DataTransferObjects
 {
     public class UserProfileWithReviewSummaryDto
     {
-        public double TotalReviewsJobs { get; set; }
+        public int TotalReviewsJobs { get; set; }
         public double AvgOverallScore { get; set; }
         public double AvgAdherence { get; set;}
         public double AvgQuality { get; set;}

@@ -47,6 +47,8 @@ namespace FullStackAuth_WebAPI.Controllers
                 UserName = user.UserName,
                 Name = user.FirstName,
                 LastName = user.LastName,
+                IsWorker = user.IsWorker,
+
 
                 // \ / UserForProfileDto format
                 //  V 

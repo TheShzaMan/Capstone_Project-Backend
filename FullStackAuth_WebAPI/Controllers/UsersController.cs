@@ -174,6 +174,7 @@ namespace FullStackAuth_WebAPI.Controllers
                 if (updatedUser.Availability != null ) { thisUser.Availability= updatedUser.Availability; }
                 if (updatedUser.PayPerHour != 0) { thisUser.PayPerHour= updatedUser.PayPerHour; }
                 if (updatedUser.BusinessDescription != null ) { thisUser.BusinessDescription= updatedUser.BusinessDescription; }
+                
 
                 
 

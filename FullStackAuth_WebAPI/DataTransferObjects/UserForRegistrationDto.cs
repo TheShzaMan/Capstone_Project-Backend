@@ -27,7 +27,7 @@ namespace FullStackAuth_WebAPI.DataTransferObjects
         public string? Availability { get; set; }
 
         
-        public string PayPerHour { get; set; }
+        public double PayPerHour { get; set; }
         
         public string? SkillLevel { get; set; }
         
